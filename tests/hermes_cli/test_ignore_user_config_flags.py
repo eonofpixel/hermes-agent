@@ -25,18 +25,25 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def _clean_env(monkeypatch):
-    """Ensure the two env-var gates start AND end each test in a known state.
+    """Ensure isolation/env gates start AND end each test in a known state.
 
     Some tests here write directly to ``os.environ`` (mirroring the real
     ``cmd_chat`` logic), so ``monkeypatch.delenv`` alone isn't enough —
     those writes aren't tracked by monkeypatch and won't be undone by it.
-    We add explicit cleanup on yield to prevent cross-test pollution.
+    Also clear ``HERMES_MANAGED_DIR`` and the managed-scope cache: this file
+    asserts user-config isolation, and a managed overlay from another same-slice
+    test can otherwise reintroduce ``model.default`` after user config is skipped.
     """
-    for var in ("HERMES_IGNORE_USER_CONFIG", "HERMES_IGNORE_RULES"):
+    from hermes_cli import managed_scope
+
+    for var in ("HERMES_IGNORE_USER_CONFIG", "HERMES_IGNORE_RULES", "HERMES_MANAGED_DIR"):
         monkeypatch.delenv(var, raising=False)
-    yield
-    for var in ("HERMES_IGNORE_USER_CONFIG", "HERMES_IGNORE_RULES"):
         os.environ.pop(var, None)
+    managed_scope.invalidate_managed_cache()
+    yield
+    for var in ("HERMES_IGNORE_USER_CONFIG", "HERMES_IGNORE_RULES", "HERMES_MANAGED_DIR"):
+        os.environ.pop(var, None)
+    managed_scope.invalidate_managed_cache()
 
 
 class TestIgnoreUserConfigEnvGate:
