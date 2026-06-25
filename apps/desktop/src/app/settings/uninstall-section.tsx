@@ -20,23 +20,23 @@ interface ModeOption {
 const OPTIONS: ModeOption[] = [
   {
     mode: 'gui',
-    title: 'Uninstall Chat GUI only',
-    description: 'Remove this desktop app. The Hermes agent, your config, and chats all stay.',
-    consequence: 'the desktop Chat GUI (this app and its data)',
+    title: '채팅 GUI만 제거',
+    description: '이 데스크탑 앱만 제거합니다. Hermes 에이전트, 설정, 채팅은 그대로 유지됩니다.',
+    consequence: '데스크탑 채팅 GUI(이 앱과 해당 데이터)',
     needsAgent: false
   },
   {
     mode: 'lite',
-    title: 'Uninstall GUI + agent, keep my data',
-    description: 'Remove the app and the Hermes agent, but keep config, chats, and secrets for a future reinstall.',
-    consequence: 'the Chat GUI and the Hermes agent (config, chats, and secrets are kept)',
+    title: 'GUI와 에이전트 제거, 내 데이터는 유지',
+    description: '앱과 Hermes 에이전트는 제거하지만, 나중에 다시 설치할 수 있도록 설정, 채팅, 비밀 값은 유지합니다.',
+    consequence: '채팅 GUI와 Hermes 에이전트(설정, 채팅, 비밀 값은 유지됨)',
     needsAgent: true
   },
   {
     mode: 'full',
-    title: 'Uninstall everything',
-    description: 'Remove the app, the agent, and all user data — config, chats, scheduled jobs, secrets, logs.',
-    consequence: 'EVERYTHING — the Chat GUI, the Hermes agent, and all of your config, chats, secrets, and logs',
+    title: '모두 제거',
+    description: '앱, 에이전트, 모든 사용자 데이터(설정, 채팅, 예약 작업, 비밀 값, 로그)를 제거합니다.',
+    consequence: '모든 항목 — 채팅 GUI, Hermes 에이전트, 모든 설정, 채팅, 비밀 값, 로그',
     // full removes the agent (and user data), so it's an agent-removing option:
     // hide it on a lite client with no local agent, same as lite. A lite client
     // connecting to a remote backend has no local agent OR local user data the
@@ -98,7 +98,7 @@ export function UninstallSection() {
     try {
       const result = await bridge.run(pending)
       if (!result.ok) {
-        setError(result.message || result.error || 'Uninstall could not start.')
+        setError(result.message || result.error || '제거를 시작할 수 없습니다.')
         setRunning(false)
         setPending(null)
       }
@@ -114,23 +114,23 @@ export function UninstallSection() {
 
   return (
     <div className="mx-auto mt-8 w-full max-w-2xl">
-      <SectionHeading icon={AlertTriangle} title="Danger zone" />
+      <SectionHeading icon={AlertTriangle} title="위험 구역" />
 
       <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3">
         {loading ? (
           <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
             <Loader2 className="size-3.5 animate-spin" />
-            Checking what&apos;s installed…
+            설치된 항목 확인 중…
           </div>
         ) : pendingOption ? (
           <div>
-            <p className="text-sm font-medium text-destructive">Confirm uninstall</p>
+            <p className="text-sm font-medium text-destructive">제거 확인</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              This removes {pendingOption.consequence}. This can&apos;t be undone.
+              {pendingOption.consequence}을(를) 제거합니다. 이 작업은 되돌릴 수 없습니다.
             </p>
             {summary?.running_app_path && (
               <p className="mt-1 font-mono text-[0.68rem] text-muted-foreground/60">
-                App: {summary.running_app_path}
+                앱: {summary.running_app_path}
               </p>
             )}
             {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
@@ -142,18 +142,18 @@ export function UninstallSection() {
                 variant="destructive"
               >
                 {running && <Loader2 className="size-3 animate-spin" />}
-                {running ? 'Uninstalling…' : 'Yes, uninstall'}
+                {running ? '제거 중…' : '예, 제거합니다'}
               </Button>
               <Button disabled={running} onClick={() => setPending(null)} size="sm" variant="text">
-                Cancel
+                취소
               </Button>
             </div>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium">Uninstall Hermes</p>
+            <p className="text-sm font-medium">Hermes 제거</p>
             <p className="text-xs text-muted-foreground">
-              Choose how much to remove. The app closes to finish the job; reopen the installer any time to come back.
+              제거할 범위를 선택하세요. 작업을 완료하기 위해 앱이 닫힙니다. 언제든 설치 관리자를 다시 열어 돌아올 수 있습니다.
             </p>
             <div className="mt-1 flex flex-col gap-2">
               {visibleOptions.map(opt => (

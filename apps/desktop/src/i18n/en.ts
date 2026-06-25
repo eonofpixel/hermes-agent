@@ -415,6 +415,7 @@ export const en: Translations = {
     },
     fieldLabels: FIELD_LABELS,
     fieldDescriptions: FIELD_DESCRIPTIONS,
+    optionLabels: {},
     about: {
       heading: 'Hermes Desktop',
       version: value => `Version ${value}`,
@@ -668,6 +669,8 @@ export const en: Translations = {
       failedRemove: key => `Failed to remove ${key}`,
       failedReveal: key => `Failed to reveal ${key}`,
       removeConfirm: key => `Remove ${key} from .env?`,
+      envVarLabel: (key, fallback) => fallback || key,
+      envVarPrompt: (_key, fallback) => fallback,
       set: 'Set',
       notSet: 'Not set',
       selectedTitle: 'Provider selected',

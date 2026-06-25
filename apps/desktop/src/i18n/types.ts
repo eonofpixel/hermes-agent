@@ -5,7 +5,7 @@
 // partial locales should use `defineLocale()` so missing desktop-only strings
 // fall back to English while new keys remain type-checked.
 
-export type Locale = 'en' | 'zh' | 'zh-hant' | 'ja'
+export type Locale = 'en' | 'zh' | 'zh-hant' | 'ja' | 'ko'
 
 interface ModeOptionCopy {
   label: string
@@ -309,6 +309,7 @@ export interface Translations {
     }
     fieldLabels: Record<string, string>
     fieldDescriptions: Record<string, string>
+    optionLabels: Record<string, string>
     about: {
       heading: string
       version: (value: string) => string
@@ -543,6 +544,8 @@ export interface Translations {
       failedRemove: (key: string) => string
       failedReveal: (key: string) => string
       removeConfirm: (key: string) => string
+      envVarLabel?: (key: string, fallback: string) => string
+      envVarPrompt?: (key: string, fallback: string) => string
       set: string
       notSet: string
       selectedTitle: string

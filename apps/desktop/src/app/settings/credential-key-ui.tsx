@@ -309,9 +309,11 @@ export function ProviderKeyRows({ expanded, group, onExpand, onToggle, rowProps 
           )}
 
           {group.advanced.map(([key, info]) => {
-            const fieldLabel = isKeyVar(key, info)
-              ? prettyName(key.replace(/(?:_API_KEY|_TOKEN|_KEY)$/i, ''))
-              : friendlyFieldLabel(key, info)
+            const fieldLabel =
+              t.settings.fieldLabels[key] ??
+              (isKeyVar(key, info)
+                ? prettyName(key.replace(/(?:_API_KEY|_TOKEN|_KEY)$/i, ''))
+                : friendlyFieldLabel(key, info))
 
             return (
               <ListRow

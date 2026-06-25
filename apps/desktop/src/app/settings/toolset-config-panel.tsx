@@ -47,6 +47,8 @@ interface EnvVarFieldProps {
 function EnvVarField({ envVar, isSet, onSaved, onCleared }: EnvVarFieldProps) {
   const { t } = useI18n()
   const copy = t.settings.toolsets
+  const envLabel = copy.envVarLabel?.(envVar.key, envVar.prompt || envVar.key) ?? envVar.prompt ?? envVar.key
+  const envPrompt = copy.envVarPrompt?.(envVar.key, envVar.prompt || envVar.key) ?? envVar.prompt ?? ''
   const [editing, setEditing] = useState(false)
   const [value, setValue] = useState('')
   const [revealed, setRevealed] = useState<string | null>(null)
@@ -111,29 +113,39 @@ function EnvVarField({ envVar, isSet, onSaved, onCleared }: EnvVarFieldProps) {
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-xs font-medium">{envVar.key}</span>
+            <span className="text-xs font-medium">{envLabel}</span>
             <Pill tone={isSet ? 'primary' : 'muted'}>
               {isSet && <Check className="size-3" />}
               {isSet ? copy.set : copy.notSet}
             </Pill>
           </div>
-          {envVar.prompt && envVar.prompt !== envVar.key && (
-            <p className="mt-0.5 text-[0.7rem] text-muted-foreground">{envVar.prompt}</p>
+          {envPrompt && envPrompt !== envLabel && (
+            <p className="mt-0.5 text-[0.7rem] text-muted-foreground">{envPrompt}</p>
+          )}
+          {envLabel !== envVar.key && (
+            <p className="mt-0.5 font-mono text-[0.65rem] text-muted-foreground/60">{envVar.key}</p>
           )}
         </div>
         {!editing && (
-          <EnvVarActionsMenu
-            clearDisabled={busy}
-            docsUrl={envVar.url}
-            isRevealed={revealed !== null}
-            isSet={isSet}
-            label={envVar.key}
-            onClear={() => void handleClear()}
-            onEdit={() => setEditing(true)}
-            onReveal={() => void handleReveal()}
-          >
-            <EnvVarActionsTrigger label={envVar.key} onClick={event => event.stopPropagation()} />
-          </EnvVarActionsMenu>
+          <div className="flex shrink-0 items-center gap-1">
+            {!isSet && (
+              <Button onClick={() => setEditing(true)} size="sm" variant="secondary">
+                {copy.set}
+              </Button>
+            )}
+            <EnvVarActionsMenu
+              clearDisabled={busy}
+              docsUrl={envVar.url}
+              isRevealed={revealed !== null}
+              isSet={isSet}
+              label={envVar.key}
+              onClear={() => void handleClear()}
+              onEdit={() => setEditing(true)}
+              onReveal={() => void handleReveal()}
+            >
+              <EnvVarActionsTrigger label={envVar.key} onClick={event => event.stopPropagation()} />
+            </EnvVarActionsMenu>
+          </div>
         )}
       </div>
 
@@ -149,7 +161,7 @@ function EnvVarField({ envVar, isSet, onSaved, onCleared }: EnvVarFieldProps) {
             autoFocus
             className="min-w-52 flex-1 font-mono"
             onChange={e => setValue(e.target.value)}
-            placeholder={envVar.prompt || envVar.key}
+            placeholder={envPrompt || envLabel || envVar.key}
             type={envVar.default ? 'text' : 'password'}
             value={value}
           />
